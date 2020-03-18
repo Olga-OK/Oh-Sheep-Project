@@ -143,7 +143,7 @@ img.onload = updateCanvas;
 // function testCollision(obstacle) {
     
     
-//     //if (newPlayer.bottomBird() >= myObstacles[i].topColumnB() || newPlayer.rightBird() >= myObstacles[i].leftColumnB() || newPlayer.rightBird() >= myObstacles[i].leftColumnT || newPlayer.topBird() >= myObstacles[i].topColumnT) {
+//     if (newPlayer.bottomBird() >= myObstacles[i].topColumnB() || newPlayer.rightBird() >= myObstacles[i].leftColumnB() || newPlayer.rightBird() >= myObstacles[i].leftColumnT || newPlayer.topBird() >= myObstacles[i].topColumnT) {
 //       alert(SOS)
       
 //     } else {}
