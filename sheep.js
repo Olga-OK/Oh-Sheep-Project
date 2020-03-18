@@ -1,6 +1,21 @@
 let canvas = document.getElementById('gamefield')
 let ctx = canvas.getContext('2d')
 
+//---------------------------------------------------IMAGES INITIALIZATION--------------------------------------------
+
+
+
+let sheep = new Image()
+sheep.src = `/Idle Blinking_007.png`
+
+let img = new Image()
+img.src = `/Background Img.png`
+
+let obstacle = new Image()
+obstacle.src = `/spike A.png`
+
+
+
 //-----------------------------------------------------CREATE THE PLAYER---------------------------------------------
 
 class Player {
@@ -26,7 +41,60 @@ class Player {
         this.y += this.speedY + this.gravity
     }
 
+
 }
+
+//--------------------------------------------------------ANIMATION-------------------------------------------------
+
+function SpriteSheet(frameWidth, frameHeight, frameSpeed, endFrame) {
+
+    let image = new Image()
+    image.src = `/SheepRunSprite.png`
+    let framesPerRow = 0
+    let currentFrame = 0 // the current frame to draw
+    let counter = 0 // keep track of frame rate
+
+    // calculate the number of frames in a row after the image loads
+    image.onload = function () {
+        framesPerRow = Math.floor(image.width / frameWidth)
+    }
+
+
+    // Update the animation
+    this.update = function () {
+
+        // update to the next frame if it is time
+        if (counter == (frameSpeed - 1))
+            currentFrame = (currentFrame + 1) % endFrame
+
+        // update the counter
+        counter = (counter + 1) % frameSpeed
+    }
+
+    this.draw = function (x, y) {
+        // get the row and col of the frame
+        let row = Math.floor(currentFrame / framesPerRow)
+        let col = Math.floor(currentFrame % framesPerRow)
+
+        ctx.drawImage(
+            image,
+            col * frameWidth, row * frameHeight,
+            frameWidth, frameHeight,
+            x, y,
+            frameWidth, frameHeight);
+    }
+}
+
+function animate() {
+    requestAnimFrame(animate);
+    ctx.clearRect(0, 0, 150, 150);
+
+    spritesheet.update();
+
+    spritesheet.draw(12.5, 12.5);
+}
+
+SpriteSheet(480, 480, 3, 16)
 
 function hitBottom() {
     let ground = canvas.height - newPlayer.height
@@ -34,7 +102,11 @@ function hitBottom() {
         newPlayer.y = ground
         clearInterval(intervalId)
     }
+
 }
+
+
+
 
 //-----------------------------------------------------CREATE OBSTACLES---------------------------------------------
 
@@ -50,19 +122,19 @@ class Obstacle {
 
     left() {
         return this.x
-      }
-      right() {
+    }
+    right() {
         return this.x + this.width
-      }
-      top() {
+    }
+    top() {
         return this.y
-      }
-      bottom() {
+    }
+    bottom() {
         return this.y + this.height
-      }
+    }
 
     update() {
-        ctx.drawImage(obstacle, this.x, this.y,this.width,this.height)
+        ctx.drawImage(obstacle, this.x, this.y, this.width, this.height)
         //ctx.fillRect(this.x, this.y, this.width, this.height)
         this.x -= 5
     }
@@ -70,16 +142,7 @@ class Obstacle {
     removeObstacle() {}
 }
 
-//-----------------------------------------------------IMAGES STORAGE---------------------------------------------
 
-let sheep = new Image()
-sheep.src = `/Idle Blinking_007.png`
-
-let img = new Image()
-img.src = `/Background Img.png`
-
-let obstacle = new Image()
-obstacle.src = `/spike A.png`
 
 
 let backgroundImage = {
@@ -141,11 +204,11 @@ img.onload = updateCanvas;
 
 
 // function testCollision(obstacle) {
-    
-    
+
+
 //     if (newPlayer.bottomBird() >= myObstacles[i].topColumnB() || newPlayer.rightBird() >= myObstacles[i].leftColumnB() || newPlayer.rightBird() >= myObstacles[i].leftColumnT || newPlayer.topBird() >= myObstacles[i].topColumnT) {
 //       alert(SOS)
-      
+
 //     } else {}
 //   }
 //   console.log(myObstacles)
