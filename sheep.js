@@ -23,7 +23,7 @@ class Player {
         this.width = 200
         this.height = 200
         this.x = 50
-        this.y = 720
+        this.y = 900
         this.speedY = 0
         this.gravity = 0.6
         this.status = true // Revist
@@ -66,12 +66,12 @@ class Player {
         return this.y + this.height
     }
 
-    testCollision() {
+    testCollision(obst) {
         return !(
-            this.bottom() < obstacle.top() ||
-            this.top() > obstacle.bottom() ||
-            this.right() < obstacle.left() ||
-            this.left() > obstacle.right()
+            this.bottom() < obst.top() ||
+            this.top() > obst.bottom() ||
+            this.right() < obst.left() ||
+            this.left() > obst.right()
         )
     }
 }
@@ -79,58 +79,80 @@ class Player {
 
 //--------------------------------------------------------ANIMATION-------------------------------------------------
 
-function SpriteSheet(frameWidth, frameHeight, frameSpeed, endFrame) {
+// function SpriteSheet(frameWidth, frameHeight, frameSpeed, endFrame) {
 
-    let image = new Image()
-    image.src = `/SheepRunSprite.png`
-    let framesPerRow = 0
-    let currentFrame = 0 // the current frame to draw
-    let counter = 0 // keep track of frame rate
+//     let image = new Image()
+//     image.src = `/SheepRunSprite.png`
+//     let framesPerRow = 0
+//     let currentFrame = 0 // the current frame to draw
+//     let counter = 0 // keep track of frame rate
 
-    // calculate the number of frames in a row after the image loads
-    image.onload = function () {
-        framesPerRow = Math.floor(image.width / frameWidth)
-    }
+//     // calculate the number of frames in a row after the image loads
+//     image.onload = function () {
+//         framesPerRow = Math.floor(image.width / frameWidth)
+//     }
 
 
-    // Update the animation
-    this.update = function () {
+//     // Update the animation
+//     this.update = function () {
 
-        // update to the next frame if it is time
-        if (counter == (frameSpeed - 1))
-            currentFrame = (currentFrame + 1) % endFrame
+//         // update to the next frame if it is time
+//         if (counter == (frameSpeed - 1))
+//             currentFrame = (currentFrame + 1) % endFrame
 
-        // update the counter
-        counter = (counter + 1) % frameSpeed
-    }
+//         // update the counter
+//         counter = (counter + 1) % frameSpeed
+//     }
 
-    this.draw = function (x, y) {
-        // get the row and col of the frame
-        let row = Math.floor(currentFrame / framesPerRow)
-        let col = Math.floor(currentFrame % framesPerRow)
+//     this.draw = function (x, y) {
+//         // get the row and col of the frame
+//         let row = Math.floor(currentFrame / framesPerRow)
+//         let col = Math.floor(currentFrame % framesPerRow)
 
-        ctx.drawImage(
-            image,
-            col * frameWidth, row * frameHeight,
-            frameWidth, frameHeight,
-            x, y,
-            frameWidth, frameHeight);
-    }
+//         ctx.drawImage(
+//             image,
+//             col * frameWidth, row * frameHeight,
+//             frameWidth, frameHeight,
+//             x, y,
+//             frameWidth, frameHeight);
+//     }
+// }
+
+// function animate() {
+//     requestAnimFrame(animate);
+//     ctx.clearRect(0, 0, 150, 150);
+
+//     spritesheet.update();
+
+//     spritesheet.draw(12.5, 12.5);
+// }
+
+// SpriteSheet(480, 480, 3, 16)
+
+
+let arrPathRun = []
+let currentImg = 0
+for (let i = 0; i <= 11; i++) {
+    let img = new Image()
+    img.src = `/Running/Running_00${i}.png`
+    arrPathRun.push(img)
 }
 
-function animate() {
-    requestAnimFrame(animate);
-    ctx.clearRect(0, 0, 150, 150);
-
-    spritesheet.update();
-
-    spritesheet.draw(12.5, 12.5);
+let arrPathJump = []
+let currentImgJump = 0
+for (let i = 0; i <= 5; i++) {
+    let img = new Image()
+    img.src = `/Jump Start/Jump Start_00${i}.png`
+    arrPathJump.push(img)
 }
 
-SpriteSheet(480, 480, 3, 16)
-
-
-
+let arrPathDie = []
+let currentImgDie = 0
+for (let i = 0; i <= 5; i++) {
+    let img = new Image()
+    img.src = `/Dying/Dying_00${i}.png`
+    arrPathDie.push(img)
+}
 
 
 //-----------------------------------------------------CREATE OBSTACLES---------------------------------------------
@@ -140,8 +162,8 @@ class Obstacle {
     constructor(yBottom) {
         this.x = 1400
         this.y = yBottom
-        this.width = 100
-        this.height = 100
+        this.width = 70
+        this.height = 70
 
     }
 
@@ -161,14 +183,11 @@ class Obstacle {
     update() {
         ctx.drawImage(obstacle, this.x, this.y, this.width, this.height)
         //ctx.fillRect(this.x, this.y, this.width, this.height)
-        this.x -= 5
+        this.x -= 4
     }
 
     removeObstacle() {}
 }
-
-
-
 
 let backgroundImage = {
     img: img,
@@ -195,10 +214,10 @@ let frames = 0 // make it dependent on the frames counter
 let newPlayer = new Player()
 let myObstacles = []
 
-function updateCanvas() {    
+function updateCanvas() {
 
     backgroundImage.move()
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     backgroundImage.draw()
     newPlayer.update()
@@ -208,27 +227,50 @@ function updateCanvas() {
     for (i = 0; i < myObstacles.length; i++) {
         myObstacles[i].update()
         if (newPlayer.testCollision(myObstacles[i])) {
-            alert(`GAME OVER`)
+            alert(`GAME OVER`) // clear the interval - You lost insert the Image 
+            window.location.reload()
         }
     }
 
     if (frames % 360 === 0) {
-        let xBottom = 800
+        let xBottom = 850
         myObstacles.push(new Obstacle(xBottom)) // Revisit add 2 additional obstacles 
     }
 
-    
-    
+    if (isClicked == false) {
+        if (frames % 8 === 0) {
+            currentImg = (currentImg + 3) % 11
+            sheep = arrPathRun[currentImg]
+        }
+    } else if (isClicked == true) {
+        if (frames % 8 === 0) {
+            currentImgJump = (currentImgJump + 3) % 5
+            sheep = arrPathJump[currentImgJump]
+        }
+    }
 
 }
+
+
+let isClicked = false
 
 document.onkeydown = function (e) {
     if (e.keyCode == 32) {
+        isClicked = true
         if (newPlayer.y > 550) {
-            return newPlayer.speedY = -10
-        }
+            return newPlayer.speedY = -12
+        } 
+    } else {
+        isClicked = false
     }
 }
 
-img.onload = updateCanvas;
 
+
+// document.onkeydown = function (e) {
+//     if (e.keyCode == 32) {
+//         return newPlayer.status = false
+//     }
+// }
+
+img.onload = updateCanvas
