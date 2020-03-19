@@ -22,7 +22,7 @@ class Player {
     constructor() {
         this.width = 200
         this.height = 200
-        this.x = 500
+        this.x = 50
         this.y = 720
         this.speedY = 0
         this.gravity = 0.6
@@ -33,7 +33,8 @@ class Player {
     update() {
         console.log("update clicked")
         this.newPos()
-        ctx.drawImage(sheep, 50, this.y, this.width, this.height)
+        this.hitBottom()
+        ctx.drawImage(sheep, this.x, this.y, this.width, this.height)
     }
 
     newPos() {
@@ -41,8 +42,40 @@ class Player {
         this.y += this.speedY + this.gravity
     }
 
+    hitBottom() {
+        let ground = canvas.height - newPlayer.height
+        if (newPlayer.y > ground) {
+            newPlayer.y = ground
+        }
 
+    }
+
+    left() {
+        return this.x
+    }
+
+    right() {
+        return this.x + this.width
+    }
+
+    top() {
+        return this.y
+    }
+
+    bottom() {
+        return this.y + this.height
+    }
+
+    testCollision() {
+        return !(
+            this.bottom() < obstacle.top() ||
+            this.top() > obstacle.bottom() ||
+            this.right() < obstacle.left() ||
+            this.left() > obstacle.right()
+        )
+    }
 }
+
 
 //--------------------------------------------------------ANIMATION-------------------------------------------------
 
@@ -96,14 +129,6 @@ function animate() {
 
 SpriteSheet(480, 480, 3, 16)
 
-function hitBottom() {
-    let ground = canvas.height - newPlayer.height
-    if (newPlayer.y > ground) {
-        newPlayer.y = ground
-        clearInterval(intervalId)
-    }
-
-}
 
 
 
@@ -166,13 +191,14 @@ let backgroundImage = {
 }
 
 let statusChangeArray = [] // Revisit
-let myObstacles = []
 let frames = 0 // make it dependent on the frames counter
 let newPlayer = new Player()
+let myObstacles = []
 
-function updateCanvas() {
+function updateCanvas() {    
+
     backgroundImage.move()
-
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     backgroundImage.draw()
     newPlayer.update()
@@ -181,6 +207,9 @@ function updateCanvas() {
 
     for (i = 0; i < myObstacles.length; i++) {
         myObstacles[i].update()
+        if (newPlayer.testCollision(myObstacles[i])) {
+            alert(`GAME OVER`)
+        }
     }
 
     if (frames % 360 === 0) {
@@ -188,27 +217,18 @@ function updateCanvas() {
         myObstacles.push(new Obstacle(xBottom)) // Revisit add 2 additional obstacles 
     }
 
-    hitBottom()
+    
+    
 
 }
 
 document.onkeydown = function (e) {
     if (e.keyCode == 32) {
-        return newPlayer.speedY = -10
+        if (newPlayer.y > 550) {
+            return newPlayer.speedY = -10
+        }
     }
 }
 
 img.onload = updateCanvas;
 
-//-----------------------------------------------------TEST COLLISION---------------------------------------------
-
-
-// function testCollision(obstacle) {
-
-
-//     if (newPlayer.bottomBird() >= myObstacles[i].topColumnB() || newPlayer.rightBird() >= myObstacles[i].leftColumnB() || newPlayer.rightBird() >= myObstacles[i].leftColumnT || newPlayer.topBird() >= myObstacles[i].topColumnT) {
-//       alert(SOS)
-
-//     } else {}
-//   }
-//   console.log(myObstacles)
