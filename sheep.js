@@ -6,16 +6,12 @@ window.onload = function () {
     function startGame() {
         window.setTimeout(document.location.reload(), 2000)
     }
-
 }
-
 
 let canvas = document.getElementById('gamefield')
 let ctx = canvas.getContext('2d')
 
 //---------------------------------------------------IMAGES INITIALIZATION--------------------------------------------
-
-
 
 let sheep = new Image()
 sheep.src = `/Idle Blinking_007.png`
@@ -38,7 +34,41 @@ reward.src = `/Pizza.png`
 // let obstacle4 = new Image()
 // obstacle.src = `/transparent PNG/spike C.png`
 
+//---------------------------------------------------------CREATE A SOUND--------------------------------------------
+let sound = new Audio(`/Jump-SoundBible.com-1007297584.wav`)
+sound.currentTime = 2
 
+let soundBackground = new Audio(`/Disco-funk-track-70s-80.wav`)
+soundBackground.currentTime = 0
+
+let pizzaSound = new Audio('/Eat Chips-SoundBible.com-1842806405.wav')
+pizzaSound.currentTime = 0
+
+//--------------------------------------------------------ANIMATION-------------------------------------------------
+
+let arrPathRun = []
+let currentImg = 0
+for (let i = 0; i <= 11; i++) {
+    let img = new Image()
+    img.src = `/Running/Running_00${i}.png`
+    arrPathRun.push(img)
+}
+
+let arrPathJump = []
+let currentImgJump = 0
+for (let i = 0; i <= 5; i++) {
+    let img = new Image()
+    img.src = `/Jump Start/Jump Start_00${i}.png`
+    arrPathJump.push(img)
+}
+
+let arrPathDie = []
+let currentImgDie = 0
+for (let i = 0; i <= 17; i++) {
+    let img = new Image()
+    img.src = `/Dying/Dying_00${i}.png`
+    arrPathDie.push(img)
+}
 
 
 //-----------------------------------------------------CREATE THE PLAYER---------------------------------------------
@@ -52,7 +82,6 @@ class Player {
         this.speedY = 0
         this.gravity = 0.6
         this.status = true // Revist
-
     }
 
     update() {
@@ -99,34 +128,6 @@ class Player {
         )
     }
 }
-
-
-//--------------------------------------------------------ANIMATION-------------------------------------------------
-
-let arrPathRun = []
-let currentImg = 0
-for (let i = 0; i <= 11; i++) {
-    let img = new Image()
-    img.src = `/Running/Running_00${i}.png`
-    arrPathRun.push(img)
-}
-
-let arrPathJump = []
-let currentImgJump = 0
-for (let i = 0; i <= 5; i++) {
-    let img = new Image()
-    img.src = `/Jump Start/Jump Start_00${i}.png`
-    arrPathJump.push(img)
-}
-
-let arrPathDie = []
-let currentImgDie = 0
-for (let i = 0; i <= 17; i++) {
-    let img = new Image()
-    img.src = `/Dying/Dying_00${i}.png`
-    arrPathDie.push(img)
-}
-
 
 //-----------------------------------------------------CREATE OBSTACLES---------------------------------------------
 
@@ -195,7 +196,7 @@ class Reward {
 }
 
 
-//-----------------------------------------------------CREATE BACKGROUND---------------------------------------------
+//-----------------------------------------------------CREATE BACKGROUND------------------------------------------------
 
 let backgroundImage = {
     img: img,
@@ -237,17 +238,6 @@ function score() {
     ctx.fillStyle = "green"
     ctx.fillText("Score: " + points, 1000, 250)
 }
-
-//---------------------------------------------------------CREATE A SOUND--------------------------------------------
-let sound = new Audio(`/Jump-SoundBible.com-1007297584.wav`)
-sound.currentTime = 2
-
-let soundBackground = new Audio(`/Disco-funk-track-70s-80.wav`)
-soundBackground.currentTime = 0
-
-
-let pizzaSound = new Audio('/Eat Chips-SoundBible.com-1842806405.wav')
-pizzaSound.currentTime = 0
 
 //---------------------------------------------------------CANVAS UPDATE---------------------------------------------
 
@@ -292,7 +282,7 @@ function updateCanvas() {
         if (newPlayer.testCollision(myRewards[i])) {
             pizzaSound.play()
             double = true
-            //myRewards.removeReward()
+            myRewards.splice(new Reward())
         }
     }
 
