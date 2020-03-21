@@ -1,6 +1,6 @@
 window.onload = function () {
     document.getElementById("start-button").onclick = function () {
-        startGame();
+        startGame()
     }
 
     function startGame() {
@@ -189,7 +189,9 @@ class Reward {
         this.x -= 4
     }
 
-    removeReward() {}
+    removeReward() {
+        // myRewards.pull(new Reward())
+    }
 }
 
 
@@ -228,7 +230,7 @@ function score() {
         points += 1
     } else {
         points += 200
-       // console.log(`BANANA`)
+        // console.log(`BANANA`)
     }
 
     ctx.font = "30px calibri"
@@ -238,16 +240,16 @@ function score() {
 
 //---------------------------------------------------------CREATE A SOUND--------------------------------------------
 let sound = new Audio(`/Jump-SoundBible.com-1007297584.wav`)
-sound.currentTime = 0
+sound.currentTime = 2
 
 let soundBackground = new Audio(`/Disco-funk-track-70s-80.wav`)
 soundBackground.currentTime = 0
-soundBackground.play()
+
 
 let pizzaSound = new Audio('/Eat Chips-SoundBible.com-1842806405.wav')
-pizzaSound.currentTime = 2
+pizzaSound.currentTime = 0
 
-    //---------------------------------------------------------CANVAS UPDATE---------------------------------------------
+//---------------------------------------------------------CANVAS UPDATE---------------------------------------------
 
 let frames = 0
 let newPlayer = new Player()
@@ -257,8 +259,7 @@ let myRewards = []
 function updateCanvas() {
 
     backgroundImage.move()
-    
-
+    soundBackground.play()
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     backgroundImage.draw()
     newPlayer.update()
@@ -291,6 +292,7 @@ function updateCanvas() {
         if (newPlayer.testCollision(myRewards[i])) {
             pizzaSound.play()
             double = true
+            //myRewards.removeReward()
         }
     }
 
